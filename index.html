@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineGourmet - Receitas Inspiradas no Cinema</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes Google: Playfair Display (Elegante/Cinematográfico) e Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            50: '#FFFDF9',
+                            100: '#FAF6F0',
+                            200: '#F3ECE1',
+                            300: '#E8DCB8',
+                        },
+                        pastel: {
+                            orange: '#FFAB76',
+                            soft: '#FFC09F',
+                            light: '#FFE4D6',
+                            dark: '#E07A5F',
+                            deep: '#9D422B',
+                        },
+                        charcoal: {
+                            900: '#2D2926',
+                            700: '#4A4441',
+                            500: '#736B66',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF6F0;
+            color: #2D2926;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #FAF6F0;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FFC09F;
+            border-radius: 9999px;
+        }
+        .glass-card {
+            background: rgba(255, 253, 249, 0.85);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-pastel-soft selection:text-charcoal-900">
+
+    <header class="sticky top-0 z-30 bg-cream-100/90 backdrop-blur-md border-b border-pastel-light transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pastel-dark to-pastel-orange flex items-center justify-center text-cream-50 shadow-sm transform -rotate-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-serif-title font-bold text-2xl tracking-tight text-charcoal-900 block leading-none">CineGourmet</span>
+                    <span class="text-xs font-medium tracking-widest text-pastel-dark uppercase">Receitas de Cinema</span>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <button id="favoritesToggleBtn" onclick="toggleFavoritesFilter()" class="flex items-center space-x-2 px-4 py-2 rounded-full border border-pastel-soft bg-cream-50 hover:bg-pastel-light text-charcoal-900 text-sm font-medium transition-all shadow-sm">
+                    <svg id="heartIconHeader" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-pastel-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-4.5-4.5e1-1.2 0 00-3.418 1.182L12 8.364l-1.182-1.182a4.5 4.5 0 00-6.5 0z" />
+                    </svg>
+                    <span>Salvos</span>
+                    <span id="favCountBadge" class="ml-1 px-2 py-0.5 text-xs bg-pastel-orange text-cream-50 rounded-full font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <section class="text-center max-w-3xl mx-auto mb-12">
+            <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-pastel-light/60 text-pastel-deep text-xs font-semibold tracking-wide uppercase mb-4 border border-pastel-soft/40">
+                <span class="w-2 h-2 rounded-full bg-pastel-dark animate-pulse"></span>
+                <span>Sabores da Telona na sua Cozinha</span>
+            </div>
+            <h1 class="font-serif-title text-4xl sm:text-5xl lg:text-6xl font-extrabold text-charcoal-900 leading-tight mb-4">
+                Prove os pratos icônicos dos seus filmes favoritos.
+            </h1>
+            <p class="text-charcoal-700 text-base sm:text-lg mb-8 leading-relaxed font-normal">
+                Do famoso Ratatouille de Paris à aconchegante Cerveja de Manteiga. Descubra segredos culinários cinematográficos recriados com carinho.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="relative max-w-xl mx-auto">
+                <div class="relative flex items-center">
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Busque por filme, receita ou ingrediente..." class="w-full pl-12 pr-10 py-4 rounded-2xl bg-cream-50 border border-pastel-soft text-charcoal-900 placeholder-charcoal-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-pastel-orange focus:border-transparent transition-all">
+                    <svg class="absolute left-4 w-5 h-5 text-pastel-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-4 text-charcoal-500 hover:text-charcoal-900">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-pastel-light">
+                <!-- Genre Pills -->
+                <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0 custom-scrollbar" id="categoryFilters">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Secondary Filter Selectors -->
+                <div class="flex items-center space-x-3 self-end md:self-auto">
+                    <select id="difficultyFilter" onchange="applyFilters()" class="bg-cream-50 border border-pastel-soft text-charcoal-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pastel-orange">
+                        <option value="all">Todas as Dificuldades</option>
+                        <option value="Fácil">Fácil</option>
+                        <option value="Média">Média</option>
+                        <option value="Avançada">Avançada</option>
+                    </select>
+
+                    <select id="sortFilter" onchange="applyFilters()" class="bg-cream-50 border border-pastel-soft text-charcoal-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pastel-orange">
+                        <option value="default">Ordenar por</option>
+                        <option value="time-asc">Menor Tempo</option>
+                        <option value="name-asc">Nome (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div id="recipeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Cards dynamically loaded -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 bg-cream-50/50 rounded-3xl border border-dashed border-pastel-soft">
+                <div class="w-16 h-16 mx-auto mb-4 text-pastel-dark opacity-60">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                </div>
+                <h3 class="font-serif-title text-xl font-bold text-charcoal-900 mb-1">Nenhuma receita encontrada</h3>
+                <p class="text-charcoal-500 text-sm mb-4">Tente buscar por outro termo ou remova os filtros selecionados.</p>
+                <button onclick="resetFilters()" class="px-5 py-2.5 bg-pastel-orange text-cream-50 font-medium text-sm rounded-xl hover:bg-pastel-dark transition-all">Limpar Filtros</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="recipeModal" class="fixed inset-0 z-50 hidden overflow-y-auto custom-scrollbar bg-charcoal-900/40 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 transition-opacity">
+        <div class="relative w-full max-w-4xl bg-cream-50 rounded-3xl shadow-2xl border border-pastel-light overflow-hidden my-8 max-h-[90vh] flex flex-col">
+            <!-- Modal Header / Banner -->
+            <div class="relative h-64 sm:h-80 w-full overflow-hidden flex-shrink-0 bg-cream-200">
+                <img id="modalImage" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 via-charcoal-900/30 to-transparent"></div>
+                
+                <!-- Close Button -->
+                <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-cream-50/80 hover:bg-cream-50 text-charcoal-900 flex items-center justify-center backdrop-blur-md transition-all shadow-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+
+                <!-- Movie Tag & Favorite -->
+                <div class="absolute top-4 left-4 flex items-center space-x-2">
+                    <span id="modalCategory" class="px-3 py-1 rounded-full text-xs font-semibold bg-pastel-orange text-cream-50 shadow-sm"></span>
+                </div>
+
+                <!-- Title & Movie Info -->
+                <div class="absolute bottom-6 left-6 right-6 text-cream-50">
+                    <div id="modalMovieTitle" class="text-xs uppercase tracking-widest font-semibold text-pastel-soft mb-1"></div>
+                    <h2 id="modalTitle" class="font-serif-title text-3xl sm:text-4xl font-extrabold leading-tight mb-2"></h2>
+                    <p id="modalQuote" class="text-sm italic text-cream-100 opacity-90 line-clamp-2 max-w-2xl"></p>
+                </div>
+            </div>
+
+            <!-- Modal Content Scrollable Area -->
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scrollbar flex-grow space-y-8">
+                <!-- Recipe Meta Stats -->
+                <div class="grid grid-cols-3 gap-4 p-4 rounded-2xl bg-cream-100 border border-pastel-light text-center">
+                    <div>
+                        <span class="block text-xs text-charcoal-500 uppercase font-medium">Tempo</span>
+                        <span id="modalTime" class="font-bold text-charcoal-900 text-base sm:text-lg"></span>
+                    </div>
+                    <div class="border-x border-pastel-light">
+                        <span class="block text-xs text-charcoal-500 uppercase font-medium">Dificuldade</span>
+                        <span id="modalDifficulty" class="font-bold text-charcoal-900 text-base sm:text-lg"></span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-charcoal-500 uppercase font-medium">Rendimento</span>
+                        <span id="modalServings" class="font-bold text-charcoal-900 text-base sm:text-lg"></span>
+                    </div>
+                </div>
+
+                <!-- Timer Bar Widget -->
+                <div class="bg-pastel-light/40 border border-pastel-soft rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-pastel-orange text-cream-50 flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-charcoal-900 text-sm">Cronômetro de Cozinha</h4>
+                            <p class="text-xs text-charcoal-500">Ajuda a controlar os tempos do seu preparo</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span id="timerDisplay" class="font-mono font-bold text-2xl text-pastel-deep w-20 text-center">05:00</span>
+                        <div class="flex space-x-1">
+                            <button onclick="startTimer()" class="px-3 py-1.5 bg-pastel-dark text-cream-50 rounded-lg text-xs font-semibold hover:bg-pastel-deep transition-all">Iniciar</button>
+                            <button onclick="pauseTimer()" class="px-3 py-1.5 bg-cream-200 text-charcoal-900 rounded-lg text-xs font-semibold hover:bg-cream-300 transition-all">Pausar</button>
+                            <button onclick="resetTimer()" class="px-2 py-1.5 bg-cream-200 text-charcoal-500 rounded-lg text-xs hover:bg-cream-300">↺</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe Details: Ingredients & Instructions -->
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <!-- Ingredients Checklist (2 Cols) -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <h3 class="font-serif-title text-2xl font-bold text-charcoal-900 flex items-center space-x-2">
+                            <span>Ingredientes</span>
+                        </h3>
+                        <p class="text-xs text-charcoal-500">Marque o que você já separou:</p>
+                        <ul id="modalIngredients" class="space-y-2">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+
+                    <!-- Steps Instructions (3 Cols) -->
+                    <div class="lg:col-span-3 space-y-4">
+                        <h3 class="font-serif-title text-2xl font-bold text-charcoal-900">Modo de Preparo</h3>
+                        <ol id="modalSteps" class="space-y-4">
+                            <!-- Populated dynamically -->
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 sm:p-6 bg-cream-100 border-t border-pastel-light flex items-center justify-between">
+                <button id="modalFavBtn" onclick="" class="flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-pastel-soft bg-cream-50 text-charcoal-900 text-sm font-semibold hover:bg-pastel-light transition-all">
+                    <svg id="modalFavIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pastel-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-4.5-4.5e1-1.2 0 00-3.418 1.182L12 8.364l-1.182-1.182a4.5 4.5 0 00-6.5 0z" />
+                    </svg>
+                    <span id="modalFavText">Favoritar Prato</span>
+                </button>
+                <button onclick="closeModal()" class="px-6 py-2.5 bg-pastel-orange hover:bg-pastel-dark text-cream-50 font-bold text-sm rounded-xl transition-all shadow-sm">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-cream-100 border-t border-pastel-light py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="font-serif-title font-bold text-xl text-charcoal-900 mb-2">CineGourmet</div>
+            <p class="text-xs text-charcoal-500 mb-4">Feito com carinho para amantes da culinária e da sétima arte.</p>
+            <p class="text-xs text-charcoal-500">© 2026 CineGourmet — Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Recipes Dataset
+        const recipes = [
+            {
+                id: 'ratatouille',
+                title: 'Ratatouille Tradicional',
+                movie: 'Ratatouille (2007)',
+                category: 'Animação',
+                categoryBg: 'bg-amber-500',
+                prepTime: '60 min',
+                minutes: 60,
+                difficulty: 'Média',
+                servings: '4 porções',
+                image: 'https://images.unsplash.com/photo-1572453800999-e8d2d1589b7c?auto=format&fit=crop&w=800&q=80',
+                quote: '"Qualquer um pode cozinhar, mas apenas os destemidos podem ser grandes." - Chef Gusteau',
+                description: 'O lendário prato camponês francês refinado por Remy para impressionar o temido crítico Anton Ego.',
+                ingredients: [
+                    '2 beringelas médias cortadas em fatias finas',
+                    '3 abobrinhas amarelas ou verdes fatiadas',
+                    '6 tomates maduros em fatias finas',
+                    '1 pimentão vermelho assado e sem pele',
+                    '1 cebola amarela picada',
+                    '2 dentes de alho amassados',
+                    'Raminhos de tomilho fresco e manjericão',
+                    'Azeite de oliva extra virgem, sal e pimenta-do-reino'
+                ],
+                steps: [
+                    'Prepare o molho de base (Piperade): Refogue a cebola e o alho no azeite. Adicione o pimentão assado batido e tempere com sal e pimenta. Espalhe no fundo do refratário.',
+                    'Monte o prato: Intercale fatias de beringela, abobrinha e tomate numa espiral perfeita cobrindo todo o refratário.',
+                    'Pincele com azeite de oliva, tempere com alho picado extra, tomilho, sal e pimenta.',
+                    'Cubra com papel manteiga cortado no formato do refratário e asse a 190°C por cerca de 45 a 50 minutos até que os legumes fiquem macios.',
+                    'Sirva quente com um fio generoso de azeite extra virgem.'
+                ]
+            },
+            {
+                id: 'butterbeer',
+                title: 'Cerveja de Manteiga Aconchegante',
+                movie: 'Harry Potter e o Enigma do Príncipe (2009)',
+                category: 'Fantasia',
+                categoryBg: 'bg-amber-600',
+                prepTime: '15 min',
+                minutes: 15,
+                difficulty: 'Fácil',
+                servings: '2 copos',
+                image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=80',
+                quote: '"Três Cervejas de Manteiga no Três Vassouras, por favor!"',
+                description: 'A bebida cremosa, doce e aquecedora mais famosa do Caldeirão Furado e de Hogsmeade.',
+                ingredients: [
+                    '500ml de guaraná ou refrigerante de baunilha bem gelado',
+                    '1/2 xícara de calda de caramelo caseira ou pronta',
+                    '2 colheres de sopa de manteiga sem sal derretida',
+                    '1/2 colher de chá de essência de baunilha',
+                    '1/4 colher de chá de noz-moscada moída',
+                    '200ml de creme de leite fresco batido em chantilly'
+                ],
+                steps: [
+                    'Numa tigela pequena, misture a manteiga derretida com a calda de caramelo e a baunilha até homogeneizar.',
+                    'Incorpore metade dessa mistura de caramelo ao creme de leite batido suavemente para criar a espuma especial.',
+                    'Misture o restante da calda de caramelo ao refrigerante gelado em uma jarra.',
+                    'Despeje o refrigerante aromatizado nos copos e cubra com a cremosa espuma de manteiga e caramelo.',
+                    'Polvilhe uma pitada de noz-moscada e sirva imediatamente!'
+                ]
+            },
+            {
+                id: 'kahuna-burger',
+                title: 'Hambúrguer Kahuna (Big Kahuna Burger)',
+                movie: 'Pulp Fiction (1994)',
+                category: 'Clássicos',
+                categoryBg: 'bg-red-500',
+                prepTime: '25 min',
+                minutes: 25,
+                difficulty: 'Fácil',
+                servings: '2 hambúrgueres',
+                image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
+                quote: '"Mmm! Este é um hambúrguer saboroso!" - Jules Winnfield',
+                description: 'O Suculento hambúrguer havaiano grelhado com abacaxi e molho teriyaki apreciado por Tarantino.',
+                ingredients: [
+                    '300g de carne moída (fraldinha ou acém)',
+                    '2 fatias de abacaxi fresco',
+                    '2 fatias de queijo cheddar em fatia',
+                    '2 pães de hambúrguer com gergelim',
+                    '2 colheres de sopa de molho Teriyaki ou Barbecue',
+                    '2 tiras de bacon crocante',
+                    'Manteiga para selar o pão'
+                ],
+                steps: [
+                    'Molde a carne em dois discos e tempere apenas com sal e pimenta na hora de ir para a frigideira.',
+                    'Grelhe as fatias de abacaxi na frigideira bem quente até ficarem levemente tostadas e caramelizadas.',
+                    'Frite os hambúrgueres em fogo alto. No minuto final, coloque o molho teriyaki, o queijo cheddar e cubra para derreter.',
+                    'Dore os pães na manteiga.',
+                    'Monte o hambúrguer: Pão, hambúrguer com queijo, bacon crocante, fatia de abacaxi grelhado e feche com o pão.'
+                ]
+            },
+            {
+                id: 'apple-strudel',
+                title: 'Strudel de Maçã com Creme',
+                movie: 'Bastardos Inglórios (2009)',
+                category: 'Drama',
+                categoryBg: 'bg-amber-800',
+                prepTime: '50 min',
+                minutes: 50,
+                difficulty: 'Avançada',
+                servings: '6 porções',
+                image: 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?auto=format&fit=crop&w=800&q=80',
+                quote: '"Espere pelo chantilly..." - Hans Landa',
+                description: 'A crocante e irresistível sobremesa austríaca servida com generosa colherada de chantilly fresco.',
+                ingredients: [
+                    '1 pacote de massa folhada pronta',
+                    '4 maçãs verdes (Granny Smith) descascadas e fatiadas',
+                    '1/2 xícara de açúcar mascavo',
+                    '1 colher de chá de canela em pó',
+                    '1/2 xícara de nozes picadas e uvas-passas',
+                    '3 colheres de sopa de manteiga derretida',
+                    'Creme chantilly fresco bem denso para servir'
+                ],
+                steps: [
+                    'Numa tigela, misture as maçãs fatiadas, o açúcar mascavo, a canela, as nozes e as passas.',
+                    'Abra a massa folhada sobre papel manteiga e pincele com parte da manteiga derretida.',
+                    'Coloque o recheio de maçã em uma das extremidades e enrole delicadamente como um rocambole.',
+                    'Pincele o topo com o restante da manteiga e faça pequenos cortes transversais na superfície.',
+                    'Asse a 200°C por 35 minutos até dourar e ficar super crocante. Sirva quente com chantilly fresco por cima!'
+                ]
+            },
+            {
+                id: 'matilda-cake',
+                title: 'Torta / Bolo de Chocolate da Matilda',
+                movie: 'Matilda (1996)',
+                category: 'Infantil / Fantasia',
+                categoryBg: 'bg-purple-600',
+                prepTime: '70 min',
+                minutes: 70,
+                difficulty: 'Média',
+                servings: '10 porções',
+                image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80',
+                quote: '"Você consegue, Bruce!"',
+                description: 'O bolo de chocolate super úmido, fudge e ultra recheado desafiado pela Sra. Trunchbull.',
+                ingredients: [
+                    '2 xícaras de farinha de trigo',
+                    '2 xícaras de açúcar',
+                    '3/4 xícara de cacau em pó 100%',
+                    '2 ovos grandes',
+                    '1 xícara de café quente bem forte',
+                    '1/2 xícara de óleo vegetal e 1 xícara de leite',
+                    '300g de chocolate meio amargo + 200g de creme de leite (para a ganache)'
+                ],
+                steps: [
+                    'Misture os ingredientes secos numa tigela grande. Adicione ovos, leite e óleo e bata até ficar homogêneo.',
+                    'Adicione o café quente por último (a massa fica bem líquida, isso garante a umidade incomparável).',
+                    'Asse em duas formas redondas untadas a 180°C por 35 minutos.',
+                    'Prepare a cobertura: Derreta o chocolate com o creme de leite até formar uma ganache brilhante e espessa.',
+                    'Monte o bolo recheando o centro com ganache e cobrindo todo o exterior com bastante fudge de chocolate.'
+                ]
+            },
+            {
+                id: 'coraline-cookies',
+                title: 'Biscoitos Amarelados da Clementine',
+                movie: 'Coraline e o Mundo Secreto (2009)',
+                category: 'Animação',
+                categoryBg: 'bg-indigo-600',
+                prepTime: '30 min',
+                minutes: 30,
+                difficulty: 'Fácil',
+                servings: '15 biscoitos',
+                image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80',
+                quote: '"Você sabia que este mundo é uma versão muito melhor do seu?"',
+                description: 'Os biscoitos amarelados e quentinhos servidos pela Outra Mãe no banquete de boas-vindas.',
+                ingredients: [
+                    '2 xícaras de farinha de trigo',
+                    '1/2 xícara de manteiga sem sal em temperatura ambiente',
+                    '1/2 xícara de açúcar refinado',
+                    '1 ovo e 1 colher de chá de extrato de baunilha',
+                    'Corante alimentício amarelo (opcional para o tom característico)',
+                    'Gota de chocolate ou confeitos para decorar'
+                ],
+                steps: [
+                    'Bata a manteiga com o açúcar até formar um creme claro e fofo.',
+                    'Adicione o ovo, a baunilha e gotas do corante amarelo. Incorpore a farinha aos poucos até formar uma massa macia.',
+                    'Faça bolinhas, disponha numa assadeira com papel manteiga e achate levemente com o palma da mão.',
+                    'Asse em forno pré-aquecido a 180°C por 12 a 15 minutos até dourarem por baixo.',
+                    'Deixe esfriar sobre uma grade e sirva com leite ou chá quente.'
+                ]
+            }
+        ];
+
+        // State Management
+        let selectedCategory = 'all';
+        let searchQuery = '';
+        let favorites = JSON.parse(localStorage.getItem('cinegourmet_favs') || '[]');
+        let showOnlyFavs = false;
+        let currentRecipeModal = null;
+
+        // Timer Variables
+        let timerInterval = null;
+        let timerSeconds = 300; // 5 min default
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCategoryFilters();
+            renderRecipes();
+            updateFavBadge();
+        });
+
+        function renderCategoryFilters() {
+            const categories = ['all', ...new Set(recipes.map(r => r.category))];
+            const container = document.getElementById('categoryFilters');
+            
+            container.innerHTML = categories.map(cat => {
+                const label = cat === 'all' ? 'Todos os Gêneros' : cat;
+                const active = selectedCategory === cat;
+                return `
+                    <button onclick="setCategory('${cat}')" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+                        active 
+                        ? 'bg-pastel-orange text-cream-50 shadow-sm' 
+                        : 'bg-cream-50 text-charcoal-700 border border-pastel-soft hover:bg-pastel-light'
+                    }">
+                        ${label}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setCategory(cat) {
+            selectedCategory = cat;
+            renderCategoryFilters();
+            applyFilters();
+        }
+
+        function toggleFavoritesFilter() {
+            showOnlyFavs = !showOnlyFavs;
+            const btn = document.getElementById('favoritesToggleBtn');
+            if (showOnlyFavs) {
+                btn.classList.add('bg-pastel-orange', 'text-cream-50');
+                btn.classList.remove('bg-cream-50', 'text-charcoal-900');
+            } else {
+                btn.classList.remove('bg-pastel-orange', 'text-cream-50');
+                btn.classList.add('bg-cream-50', 'text-charcoal-900');
+            }
+            applyFilters();
+        }
+
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            searchQuery = input.value.toLowerCase().trim();
+            document.getElementById('clearSearchBtn').classList.toggle('hidden', searchQuery === '');
+            applyFilters();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            applyFilters();
+        }
+
+        function resetFilters() {
+            selectedCategory = 'all';
+            searchQuery = '';
+            showOnlyFavs = false;
+            document.getElementById('searchInput').value = '';
+            document.getElementById('difficultyFilter').value = 'all';
+            document.getElementById('sortFilter').value = 'default';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            
+            const btn = document.getElementById('favoritesToggleBtn');
+            btn.classList.remove('bg-pastel-orange', 'text-cream-50');
+            btn.classList.add('bg-cream-50', 'text-charcoal-900');
+
+            renderCategoryFilters();
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const diffFilter = document.getElementById('difficultyFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+
+            let filtered = recipes.filter(recipe => {
+                const matchesCategory = selectedCategory === 'all' || recipe.category === selectedCategory;
+                const matchesSearch = recipe.title.toLowerCase().includes(searchQuery) || 
+                                      recipe.movie.toLowerCase().includes(searchQuery) ||
+                                      recipe.ingredients.some(i => i.toLowerCase().includes(searchQuery));
+                const matchesDiff = diffFilter === 'all' || recipe.difficulty === diffFilter;
+                const matchesFav = !showOnlyFavs || favorites.includes(recipe.id);
+
+                return matchesCategory && matchesSearch && matchesDiff && matchesFav;
+            });
+
+            if (sortFilter === 'time-asc') {
+                filtered.sort((a, b) => a.minutes - b.minutes);
+            } else if (sortFilter === 'name-asc') {
+                filtered.sort((a, b) => a.title.localeCompare(b.title));
+            }
+
+            renderRecipes(filtered);
+        }
+
+        function renderRecipes(items = recipes) {
+            const grid = document.getElementById('recipeGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (items.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = items.map(recipe => {
+                const isFav = favorites.includes(recipe.id);
+                return `
+                    <div class="group bg-cream-50 rounded-3xl overflow-hidden border border-pastel-soft/60 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <!-- Image Container -->
+                            <div class="relative h-52 w-full overflow-hidden bg-cream-200">
+                                <img src="${recipe.image}" alt="${recipe.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute top-3 left-3">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-cream-50/90 text-charcoal-900 backdrop-blur-md shadow-sm">
+                                        ${recipe.category}
+                                    </span>
+                                </div>
+                                <button onclick="toggleFavorite(event, '${recipe.id}')" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-cream-50/90 hover:bg-cream-50 flex items-center justify-center text-pastel-dark transition-all shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="${isFav ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-4.5-4.5e1-1.2 0 00-3.418 1.182L12 8.364l-1.182-1.182a4.5 4.5 0 00-6.5 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="p-6">
+                                <div class="text-xs font-semibold text-pastel-dark uppercase tracking-wider mb-1">${recipe.movie}</div>
+                                <h3 class="font-serif-title text-xl font-bold text-charcoal-900 group-hover:text-pastel-dark transition-colors mb-2 leading-snug">
+                                    ${recipe.title}
+                                </h3>
+                                <p class="text-charcoal-700 text-sm line-clamp-2 mb-4 font-normal">
+                                    ${recipe.description}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer Info -->
+                        <div class="px-6 pb-6 pt-0 border-t border-pastel-light/50 flex items-center justify-between text-xs text-charcoal-500 mt-auto">
+                            <div class="flex items-center space-x-3 pt-4">
+                                <span class="flex items-center space-x-1">
+                                    <svg class="w-4 h-4 text-pastel-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span>${recipe.prepTime}</span>
+                                </span>
+                                <span>•</span>
+                                <span>${recipe.difficulty}</span>
+                            </div>
+                            <button onclick="openModal('${recipe.id}')" class="pt-4 font-semibold text-pastel-dark group-hover:underline flex items-center space-x-1">
+                                <span>Ver Receita</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleFavorite(event, recipeId) {
+            if (event) event.stopPropagation();
+            
+            if (favorites.includes(recipeId)) {
+                favorites = favorites.filter(id => id !== recipeId);
+            } else {
+                favorites.push(recipeId);
+            }
+            
+            localStorage.setItem('cinegourmet_favs', JSON.stringify(favorites));
+            updateFavBadge();
+            applyFilters();
+
+            if (currentRecipeModal && currentRecipeModal.id === recipeId) {
+                updateModalFavState(recipeId);
+            }
+        }
+
+        function updateFavBadge() {
+            document.getElementById('favCountBadge').innerText = favorites.length;
+        }
+
+        function openModal(recipeId) {
+            const recipe = recipes.find(r => r.id === recipeId);
+            if (!recipe) return;
+
+            currentRecipeModal = recipe;
+
+            document.getElementById('modalImage').src = recipe.image;
+            document.getElementById('modalTitle').innerText = recipe.title;
+            document.getElementById('modalMovieTitle').innerText = recipe.movie;
+            document.getElementById('modalCategory').innerText = recipe.category;
+            document.getElementById('modalQuote').innerText = recipe.quote;
+            document.getElementById('modalTime').innerText = recipe.prepTime;
+            document.getElementById('modalDifficulty').innerText = recipe.difficulty;
+            document.getElementById('modalServings').innerText = recipe.servings;
+
+            // Ingredients List with Checkboxes
+            const ingredientsContainer = document.getElementById('modalIngredients');
+            ingredientsContainer.innerHTML = recipe.ingredients.map((ing, idx) => `
+                <li class="flex items-start space-x-3 text-sm text-charcoal-700">
+                    <input type="checkbox" id="ing-${idx}" class="mt-1 rounded text-pastel-orange focus:ring-pastel-soft border-pastel-soft w-4 h-4 cursor-pointer">
+                    <label for="ing-${idx}" class="cursor-pointer select-none leading-relaxed">${ing}</label>
+                </li>
+            `).join('');
+
+            // Steps List
+            const stepsContainer = document.getElementById('modalSteps');
+            stepsContainer.innerHTML = recipe.steps.map((step, idx) => `
+                <li class="flex items-start space-x-3 text-sm text-charcoal-700">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-pastel-light text-pastel-deep font-bold text-xs flex items-center justify-center mt-0.5">${idx + 1}</span>
+                    <span class="leading-relaxed">${step}</span>
+                </li>
+            `).join('');
+
+            updateModalFavState(recipeId);
+
+            // Show Modal
+            document.getElementById('recipeModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Reset Timer to default 5 mins
+            resetTimer();
+        }
+
+        function updateModalFavState(recipeId) {
+            const isFav = favorites.includes(recipeId);
+            const favBtn = document.getElementById('modalFavBtn');
+            const favIcon = document.getElementById('modalFavIcon');
+            const favText = document.getElementById('modalFavText');
+
+            favBtn.onclick = (e) => toggleFavorite(e, recipeId);
+
+            if (isFav) {
+                favIcon.setAttribute('fill', 'currentColor');
+                favText.innerText = 'Salvo nos Favoritos';
+                favBtn.classList.add('bg-pastel-light');
+            } else {
+                favIcon.setAttribute('fill', 'none');
+                favText.innerText = 'Favoritar Prato';
+                favBtn.classList.remove('bg-pastel-light');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('recipeModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            currentRecipeModal = null;
+            pauseTimer();
+        }
+
+        // Close Modal when clicking outside
+        document.getElementById('recipeModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('recipeModal')) {
+                closeModal();
+            }
+        });
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            document.getElementById('timerDisplay').innerText = 
+                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                if (timerSeconds > 0) {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    pauseTimer();
+                    alert('⏱️ O tempo do cronômetro acabou!');
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 300;
+            updateTimerDisplay();
+        }
+    </script>
+</body>
+</html>
